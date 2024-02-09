@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 public class DeleteUserTest {
     int id;
@@ -35,11 +36,25 @@ public class DeleteUserTest {
     @Test
 
     public void delete_user(){
+
+        //writing get call as delete is not working without get
+
         given().log().all()
                 .header("Authorization","Bearer 1f99558079902d51dd2c7e9ea67f4859509b01c2892b82d5ea6a9cf4fe07d0d4")
-                .when().log().all()
-                .post("/public/v2/users"+id)
-                .then().log().all()
+                .when()
+                .get("/public/v2/users/"+id)
+                .then()
+                .assertThat()
+                .statusCode(200);
+//                .body("id",equalTo(id))
+//                .extract()
+//                .path("name");
+
+        given().log().all()
+                .header("Authorization","Bearer 1f99558079902d51dd2c7e9ea67f4859509b01c2892b82d5ea6a9cf4fe07d0d4")
+                .when()
+                .delete("/public/v2/users/"+id)
+                .then()
                 .assertThat()
                 .statusCode(204);
     }
