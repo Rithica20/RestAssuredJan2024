@@ -4,6 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import pojo.BookingAuth;
 
 import java.io.File;
 
@@ -53,5 +54,25 @@ public class BookingAuthTest {
 
         System.out.println(tokenID);
         Assert.assertNotNull(tokenID);
+    }
+
+    @Test
+    public void post_req_BookingAuthTokenTestWithPojo(){
+
+        RestAssured.baseURI = "https://restful-booker.herokuapp.com";
+        BookingAuth auth = new BookingAuth("admin","password123");
+
+        String tokenID=  given().log().all()
+                .contentType(ContentType.JSON)
+                .body(auth)
+                .when().log().all()
+                .post("/auth")
+                .then().log().all()
+                .assertThat()
+                .statusCode(200)
+                .extract()
+                .path("token");
+
+        System.out.println(tokenID);
     }
 }
